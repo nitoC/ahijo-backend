@@ -23,7 +23,7 @@ app.get("/api", (req: Request, res: Response) => {
 app.use("/api", login);
 app.use("/api", register);
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   app.listen(port || 5000, () => {
     console.log(`app is running on ${port}`);
   });

@@ -3,19 +3,27 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-export const generateTokenUser = async ({ data }: { data: string }) => {
+export const generateTokenUser = async ({ data }: { data: { id: string } }) => {
   return await jwt.sign(data, process.env.JWT_SECRET_USER, {
     expiresIn: "24h",
   });
 };
-export const generateRefreshToken = async ({ data }: { data: string }) => {
+export const generateRefreshToken = async ({
+  data,
+}: {
+  data: { id: string };
+}) => {
   return await jwt.sign(data, process.env.JWT_SECRET_USER, {
     expiresIn: "48h",
   });
 };
-export const generateTokenAdmin = async ({ data }: { data: string }) => {
+export const generateTokenAdmin = async ({
+  data,
+}: {
+  data: { id: string };
+}) => {
   return await jwt.sign(data, process.env.JWT_SECRET_ADMIN, {
-    expiresIn: "24min",
+    expiresIn: 60 * 24,
   });
 };
 export const verifyTokenUser = async ({ token }: { token: string }) => {

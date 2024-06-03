@@ -1,19 +1,19 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/config.js");
 
-const OrderDetails = sequelize.define("Order", {
+const OrderDetails = sequelize.define("order-details", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
   },
-  userId: {
+  user_id: {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  orderId: {
-    type: DataTypes.INTEGER,
+  order_id: {
+    type: DataTypes.UUID,
     allowNull: false,
   },
   location: {

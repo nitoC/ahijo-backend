@@ -1,7 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/config.js");
+const User = require("./User.js");
 
-const UserDetails = sequelize.define("user-detail", {
+const UserDetails = sequelize.define("user-details", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -10,6 +11,10 @@ const UserDetails = sequelize.define("user-detail", {
   },
   address: {
     type: DataTypes.STRING,
+  },
+  user_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
   },
 });
 

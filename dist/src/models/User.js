@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/config.js");
-const Users = sequelize.define("user", {
+const Order = require("./Orders.js");
+const UserDetails = require("./UserDetails");
+const Users = sequelize.define("users", {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,

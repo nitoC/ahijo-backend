@@ -11,9 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require("bcryptjs");
 const zod_1 = require("zod");
+const jwt_1 = require("../helpers/jwt");
 const user = require("../models/User.js");
+const jwt = require("jsonwebtoken");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        let customer;
         const reqObject = zod_1.z.object({
             email: zod_1.z.string().email().min(8),
             password: zod_1.z.string().min(8),
@@ -22,7 +25,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(email, password);
         const reqValid = reqObject.safeParse({ email, password });
         if (reqValid.success) {
-            const customer = yield user.findOne({
+            customer = yield user.findOne({
                 where: { email },
             });
             console.log(customer, "custoomer");
@@ -36,11 +39,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             let checkPassword = yield bcrypt.compare(password, customer.password);
             console.log(checkPassword, "checkpass");
             if (checkPassword) {
+                let token = yield (0, jwt_1.generateTokenUser)({ data: { id: customer.id } });
+                let refreshToken = yield (0, jwt_1.generateRefreshToken)({
+                    data: { id: customer.id },
+                });
                 res.json({
                     message: "login success",
                     success: true,
                     status: 200,
-                    data: customer,
+                    data: { id: customer.id, token, refreshToken },
                 });
                 return;
             }

@@ -2,14 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/config.js");
-const Order = sequelize.define("Order", {
+const User = require("./User.js");
+const OrderDetails = require("./OrderDetails.js");
+const Order = sequelize.define("order", {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
     },
-    userId: {
+    user_id: {
         type: DataTypes.UUID,
         allowNull: false,
     },
@@ -17,7 +19,7 @@ const Order = sequelize.define("Order", {
         type: DataTypes.DOUBLE,
         allowNull: false,
     },
-    orderStatus: {
+    order_status: {
         type: DataTypes.STRING,
         values: ["pending", "shipped", "cancelled"],
         defaultValue: "pending",

@@ -31,8 +31,10 @@ const login = async (req: Request, res: Response) => {
       let checkPassword = await bcrypt.compare(password, customer.password);
       console.log(checkPassword, "checkpass");
       if (checkPassword) {
-        let token = await generateTokenUser({ data: customer.id });
-        let refreshToken = await generateRefreshToken({ data: customer.id });
+        let token = await generateTokenUser({ data: { id: customer.id } });
+        let refreshToken = await generateRefreshToken({
+          data: { id: customer.id },
+        });
         res.json({
           message: "login success",
           success: true,
