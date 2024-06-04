@@ -16,5 +16,11 @@ const CartItem = sequelize.define("cart-item", {
     cart_id: {
         type: sequelize_1.DataTypes.UUID,
     },
+    product_id: {
+        type: sequelize_1.DataTypes.UUID,
+    },
+    quantity: {
+        type: sequelize_1.DataTypes.INTEGER,
+    },
 });
 module.exports = CartItem;
