@@ -1,30 +1,55 @@
-const express = require("express");
-const app = express();
-const dotenv = require("dotenv");
-const cors = require("cors");
-const bodyparser = require("body-parser");
-const login = require("./routes/login.js");
-const register = require("./routes/register.js");
-const db = require("./models/index.js");
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import login from "./routes/login.js";
+import register from "./routes/register.js";
+import product from "./routes/products.js";
 
+import path from "path";
+import db from "./models/index.js";
+import swaggerExpress from "swagger-ui-express";
+import swaggerDoc from "swagger-jsdoc";
+//@ts-ignore
+import options from "../../swaggerOptions.json";
+
+// Initialize the express app
+const app = express();
+
+// Load environment variables from .env file
 dotenv.config();
 
-const port = process.env.PORT;
-console.log(__dirname, "dirname");
+// Set the port
+const port = process.env.PORT || 5000;
 
+// Use middleware
 app.use(cors());
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-app.get("/api", (req: Request, res: Response) => {
-  res.json({ message: "welcome to ahijoe shoes" });
+// Set the views directory and view engine
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
+// Define routes
+app.get("/", (req: Request, res: Response) => {
+  res.render("admin");
 });
+app.get("/admin", (req: Request, res: Response) => {
+  res.render("dashboard");
+});
+
 app.use("/api", login);
 app.use("/api", register);
+app.use("/api", product);
 
-db.sequelize.sync({ alter: true }).then(() => {
-  app.listen(port || 5000, () => {
-    console.log(`app is running on ${port}`);
+const specs = swaggerDoc(options);
+app.use("/api-docs", swaggerExpress.serve, swaggerExpress.setup(specs));
+
+// Sync the database and start the server
+//@ts-ignore
+db.sequelize.default.sync({ alter: true }).then(() => {
+  app.listen(port, () => {
+    console.log(`App is running on port ${port}`);
   });
 });

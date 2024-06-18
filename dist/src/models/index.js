@@ -52,4 +52,5 @@ Order.hasMany(OrderDetails, { foreignKey: "order_id" });
 Cart.hasMany(CartItem, { foreignKey: "cart_id" });
 //@ts-ignore
 db.sequelize = sequelize;
-module.exports = db;
+console.log(db, "sequel");
+exports.default = db;

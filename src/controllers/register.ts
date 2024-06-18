@@ -60,4 +60,4 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
-module.exports = register;
+export default register;

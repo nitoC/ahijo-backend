@@ -62,4 +62,4 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
 });
-module.exports = register;
+exports.default = register;

@@ -1,7 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../db/config.js");
-const User = require("./User.js");
-const OrderDetails = require("./OrderDetails.js");
+import { DataTypes } from "sequelize";
+import sequelize from "../db/config.js";
 
 const Order = sequelize.define(
   "order",
@@ -22,7 +20,7 @@ const Order = sequelize.define(
     },
     order_status: {
       type: DataTypes.STRING,
-      values: ["pending", "shipped", "cancelled"],
+      values: ["pending", "shipped", "cancelled", "delivered"],
       defaultValue: "pending",
       allowNull: false,
     },

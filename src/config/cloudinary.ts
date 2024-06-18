@@ -1,50 +1,57 @@
 import { v2 as cloudinary } from "cloudinary";
+import datauir from "datauri";
+import DataURIParser from "datauri/parser";
 const dotenv = require("dotenv");
 dotenv.config();
 
-export const cloudinaryHandler = () => {
-  const cloudKey = process.env.CLOUD_KEY;
-  const cloudSecret = process.env.CLOUD_SECRET;
-  const cloudUser = process.env.CLOUD_USER;
+const cloudKey = process.env.CLOUD_KEY;
+const cloudSecret = process.env.CLOUD_SECRET;
+const cloudUser = process.env.CLOUD_USER;
 
-  (async function () {
-    // Configuration
-    cloudinary.config({
-      cloud_name: cloudUser,
-      api_key: cloudKey,
-      api_secret: cloudSecret, // Click 'View Credentials' below to copy your API secret
+// Configuration
+cloudinary.config({
+  cloud_name: cloudUser,
+  api_key: cloudKey,
+  api_secret: cloudSecret,
+});
+
+// Upload an image
+export const uploadFile = async (file: any, folder: string, id: string) => {
+  //console.log(file, "cloudinary file");
+  try {
+    const parser = new DataURIParser();
+    let imageUri = parser.format(".jpg", file.buffer);
+    // console.log(imageUri, "uri image");
+    const buffer = parser.format(file.mimetype, file.buffer);
+    console.log(buffer.content, "buffer");
+    //@ts-ignore
+    const uploadResponse = await cloudinary.uploader.upload(buffer.content, {
+      folder: folder,
+      public_id: id,
+      // tags: ['express', 'typescript'],
     });
-
-    // Upload an image
-    const uploadResult = await cloudinary.uploader
-      .upload(
-        "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-        {
-          public_id: "shoes",
-        }
-      )
-      .catch((error) => {
-        console.log(error);
-      });
-
-    console.log(uploadResult);
-
-    // Optimize delivery by resizing and applying auto-format and auto-quality
-    const optimizeUrl = cloudinary.url("shoes", {
-      fetch_format: "auto",
-      quality: "auto",
-    });
-
-    console.log(optimizeUrl);
-
-    //Transform the image: auto-crop to square aspect_ratio
-    const autoCropUrl = cloudinary.url("shoes", {
-      crop: "auto",
-      gravity: "auto",
-      width: 500,
-      height: 500,
-    });
-
-    console.log(autoCropUrl);
-  })();
+    console.log(uploadResponse.secure_url, "upload url");
+    return uploadResponse.secure_url;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
+
+// // Optimize delivery by resizing and applying auto-format and auto-quality
+// const optimizeUrl = cloudinary.url("shoes", {
+//   fetch_format: "auto",
+//   quality: "auto",
+// });
+
+// console.log(optimizeUrl);
+
+// //Transform the image: auto-crop to square aspect_ratio
+// const autoCropUrl = cloudinary.url("shoes", {
+//   crop: "auto",
+//   gravity: "auto",
+//   width: 500,
+//   height: 500,
+// });
+
+// console.log(autoCropUrl);

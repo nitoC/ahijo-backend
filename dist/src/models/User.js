@@ -1,22 +1,23 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const { DataTypes } = require("sequelize");
-const sequelize = require("../db/config.js");
-const Order = require("./Orders.js");
-const UserDetails = require("./UserDetails");
-const Users = sequelize.define("users", {
+const sequelize_1 = require("sequelize");
+const config_js_1 = __importDefault(require("../db/config.js"));
+const Users = config_js_1.default.define("users", {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: sequelize_1.DataTypes.UUID,
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
         allowNull: false,
         primaryKey: true,
     },
     email: {
-        type: DataTypes.STRING,
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
+        type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
 });

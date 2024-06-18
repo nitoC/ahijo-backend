@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 
-const sequelize = require("../db/config.js");
+import sequelize from "../db/config.js";
 
 const Product = sequelize.define(
   "product",
@@ -8,6 +8,7 @@ const Product = sequelize.define(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     name: {
@@ -22,11 +23,28 @@ const Product = sequelize.define(
     image: {
       type: DataTypes.STRING,
     },
+    top_image: {
+      type: DataTypes.STRING,
+    },
+    right_image: {
+      type: DataTypes.STRING,
+    },
+    left_image: {
+      type: DataTypes.STRING,
+    },
     category: {
       type: DataTypes.STRING,
     },
     stock: {
       type: DataTypes.INTEGER,
+    },
+    sex: {
+      type: DataTypes.STRING,
+      values: ["male", "female", "unisex"],
+      defaultValue: "unisex",
+    },
+    sizes: {
+      type: DataTypes.JSON,
     },
   },
   {

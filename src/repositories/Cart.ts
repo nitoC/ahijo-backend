@@ -6,9 +6,9 @@ const Cart = require("../models/Cart.js");
 export const addCartItem = async (data: ICart) => {
   let cart;
   try {
-    let userCart = await Cart.findOne({ where: { user_id: data.user_id } });
-    if (!userCart) {
-      cart = await Cart.create({ user_id: data.user_id });
+    if (!cart) {
+      cart = await Cart.findOrCreate({ user_id: data.user_id });
+      console.log(cart);
     }
     let result = await CartItem.create({
       user_id: data.user_id,
@@ -17,6 +17,36 @@ export const addCartItem = async (data: ICart) => {
     });
 
     return result;
+  } catch (err) {
+    console.log(err, "cart repository");
+  }
+};
+
+export const getCartItems = async (user_id: string) => {
+  let cart;
+  try {
+    cart = await CartItem.findAll({ where: { user_id: user_id } });
+    if (!cart) {
+      return null;
+    }
+
+    return cart;
+  } catch (err) {
+    console.log(err, "cart repository");
+  }
+};
+
+export const deleteCartItem = async (data: ICart) => {
+  let cart;
+  try {
+    cart = await CartItem.destroy({
+      where: { user_id: data.user_id, item_id: data.product_id },
+    });
+    if (!cart) {
+      return null;
+    }
+
+    return cart;
   } catch (err) {
     console.log(err, "cart repository");
   }

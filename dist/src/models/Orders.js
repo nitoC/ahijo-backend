@@ -1,27 +1,28 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const { DataTypes } = require("sequelize");
-const sequelize = require("../db/config.js");
-const User = require("./User.js");
-const OrderDetails = require("./OrderDetails.js");
-const Order = sequelize.define("order", {
+const sequelize_1 = require("sequelize");
+const config_js_1 = __importDefault(require("../db/config.js"));
+const Order = config_js_1.default.define("order", {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: sequelize_1.DataTypes.UUID,
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false,
     },
     user_id: {
-        type: DataTypes.UUID,
+        type: sequelize_1.DataTypes.UUID,
         allowNull: false,
     },
     totalAmount: {
-        type: DataTypes.DOUBLE,
+        type: sequelize_1.DataTypes.DOUBLE,
         allowNull: false,
     },
     order_status: {
-        type: DataTypes.STRING,
-        values: ["pending", "shipped", "cancelled"],
+        type: sequelize_1.DataTypes.STRING,
+        values: ["pending", "shipped", "cancelled", "delivered"],
         defaultValue: "pending",
         allowNull: false,
     },

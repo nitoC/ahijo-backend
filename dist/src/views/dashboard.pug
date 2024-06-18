@@ -1,0 +1,26 @@
+doctype html  
+html(lang='en')  
+ head
+   title Ahijo admin dashboard
+   link(rel="stylesheet", href="styles/styles.css")
+ body
+   h1 Admin Dashboard
+   form(action="/api/product", method="post")
+      legend Add product
+      label(for="name") product name 
+      input#name(type="text", name="name")
+      label(for="description") description
+      input#description(type="text", name="description")
+      label(for="price")  price
+      input#price(type="number", name="price") 
+      label(for="stock")  stock
+      input#price(type="number", name="stock") 
+      label(for="image") Main image 
+      input#image(type="file", name="image")
+      label(for="top_image") Top image 
+      input#top_image(type="file", name="top_image")
+      label(for="right_image") Right image 
+      input#right_image(type="file", name="right_image")
+      label(for="left_image") Left image 
+      input#left_image(type="file", name="left_image")
+      button(type="submit") Add product
