@@ -6,10 +6,9 @@ const Cart = require("../models/Cart.js");
 export const addCartItem = async (data: ICart) => {
   let cart;
   try {
-    if (!cart) {
-      cart = await Cart.findOrCreate({ user_id: data.user_id });
-      console.log(cart);
-    }
+    cart = await Cart.findOrCreate({ user_id: data.user_id });
+    console.log(cart);
+
     let result = await CartItem.create({
       user_id: data.user_id,
       cart_id: cart.id,

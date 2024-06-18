@@ -13,6 +13,7 @@ export const addToCart = async (req: Request, res: Response) => {
     res.json({ message: "success", status: 201 });
   } catch (err) {
     console.log(err);
+    res.json({ message: "Oops! an error occured", status: 500 });
   }
 };
 export const getAllCartItems = async (req: Request, res: Response) => {
@@ -23,6 +24,7 @@ export const getAllCartItems = async (req: Request, res: Response) => {
     res.json({ message: "success", status: 201, data: result });
   } catch (err) {
     console.log(err);
+    res.json({ message: "Oops! an error occured", status: 500 });
   }
 };
 export const removeFromCart = async (req: Request, res: Response) => {
@@ -38,5 +40,6 @@ export const removeFromCart = async (req: Request, res: Response) => {
     res.json({ message: "success", status: 204 });
   } catch (err) {
     console.log(err);
+    res.json({ message: "Oops! an error occured", status: 500 });
   }
 };

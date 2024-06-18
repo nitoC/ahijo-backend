@@ -6,6 +6,7 @@ const CartItem = sequelize.define("cart-item", {
     type: DataTypes.UUID,
     primaryKey: true,
     allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
   },
   user_id: {
     type: DataTypes.UUID,
@@ -13,6 +14,7 @@ const CartItem = sequelize.define("cart-item", {
   },
   cart_id: {
     type: DataTypes.UUID,
+    onDelete: "CASCADE",
   },
   product_id: {
     type: DataTypes.UUID,

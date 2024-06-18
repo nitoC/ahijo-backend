@@ -13,42 +13,63 @@ const Product = sequelize.define(
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     price: {
       type: DataTypes.INTEGER,
+      allowNull: false,
     },
     image: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     top_image: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     right_image: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     left_image: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     category: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     stock: {
       type: DataTypes.INTEGER,
+      allowNull: false,
     },
     sex: {
-      type: DataTypes.STRING,
-      values: ["male", "female", "unisex"],
+      type: DataTypes.ENUM("male", "female", "unisex"),
       defaultValue: "unisex",
+      allowNull: false,
     },
     sizes: {
       type: DataTypes.JSON,
+      allowNull: true,
+    },
+    tags: {
+      type: DataTypes.ARRAY(
+        DataTypes.ENUM(
+          "top deal",
+          "new arrival",
+          "best seller",
+          "limited edition"
+        )
+      ),
+      allowNull: true,
     },
   },
   {
-    timestamps: false,
+    timestamps: true, // Consider setting to true if you need createdAt and updatedAt fields
   }
 );
 

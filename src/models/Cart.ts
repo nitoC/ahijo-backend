@@ -6,6 +6,7 @@ const Cart = sequelize.define("cart", {
     type: DataTypes.UUID,
     primaryKey: true,
     allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
   },
   user_id: {
     type: DataTypes.UUID,
