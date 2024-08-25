@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const zod = require("zod");
 const zod_1 = require("zod");
+const User_1 = require("../repositories/User");
+const customErrors_1 = require("../errors/customErrors");
 const user = require("../models/User.js");
 const bcrypt = require("bcryptjs");
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reqObject = zod_1.z.object({
             email: zod_1.z.string().email().min(8),
@@ -29,16 +30,11 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             console.log(customer, "customer");
             //check if customer email has been used
             if (customer) {
-                res.json({
-                    message: "There is an account with this email",
-                    status: 409,
-                    data: customer,
-                });
-                return;
+                throw new customErrors_1.ConflictError("There is an account with this email");
             }
             let salt = yield bcrypt.genSalt(10);
             let passwordHash = yield bcrypt.hash(password, salt);
-            let newCustomer = yield user.create({ email, password: passwordHash });
+            let newCustomer = yield (0, User_1.addUser)(email, passwordHash);
             console.log(newCustomer, " user creation log");
             if (!newCustomer)
                 return;
@@ -49,16 +45,12 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         else {
-            res.json({ message: "invalid entry", status: 400 });
-            return;
+            throw new customErrors_1.BadRequestError("invalid request parameter");
         }
     }
     catch (err) {
-        if (err && err instanceof Error) {
-            console.log(err && (err === null || err === void 0 ? void 0 : err.message) ? err.message : "error");
-            res
-                .status(500)
-                .json({ message: "oops! server error", error: err, status: 500 });
+        if (err) {
+            next(err);
         }
     }
 });

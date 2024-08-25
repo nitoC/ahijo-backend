@@ -47,9 +47,14 @@ User.hasOne(UserDetails, { foreignKey: "user_id" });
 UserDetails.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Order, { foreignKey: "user_id" });
 Order.belongsTo(User, { foreignKey: "user_id" });
-CartItem.hasMany(Product, { foreignKey: "product_id" });
+User.hasOne(Cart, { foreignKey: "user_id" });
+Cart.belongsTo(User, { foreignKey: "user_id" });
+CartItem.belongsTo(Product, { foreignKey: "product_id" });
+Product.hasMany(CartItem, { foreignKey: "product_id" });
 Order.hasMany(OrderDetails, { foreignKey: "order_id" });
 Cart.hasMany(CartItem, { foreignKey: "cart_id" });
+CartItem.belongsTo(Cart, { foreignKey: "cart_id" });
+CartItem.sync({ alter: true });
 //@ts-ignore
 db.sequelize = sequelize;
 console.log(db, "sequel");

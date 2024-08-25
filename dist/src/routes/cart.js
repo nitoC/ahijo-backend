@@ -1,13 +1,8 @@
-import { Router } from "express";
-import uploader from "../config/upload.js";
-import {
-  addToCart,
-  removeFromCart,
-  getAllCartItems,
-  updateCart,
-} from "../controllers/cart";
-
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const cart_1 = require("../controllers/cart");
+const router = (0, express_1.Router)();
 /**
  * @swagger
  * /api/cart:
@@ -56,9 +51,7 @@ const router = Router();
  *       500:
  *         description: An error occurred
  */
-
-router.post("/cart", addToCart);
-
+router.post("/cart", cart_1.addToCart);
 /**
  * @swagger
  * /api/cart/{user_id}:
@@ -93,8 +86,7 @@ router.post("/cart", addToCart);
  *       500:
  *         description: An error occurred
  */
-router.get("/cart/:user_id", getAllCartItems);
-
+router.get("/cart/:user_id", cart_1.getAllCartItems);
 /**
  * @swagger
  * /api/cart:
@@ -143,9 +135,7 @@ router.get("/cart/:user_id", getAllCartItems);
  *       500:
  *         description: An error occurred
  */
-
-router.put("/cart", updateCart);
-
+router.put("/cart", cart_1.updateCart);
 /**
  * @swagger
  * /api/cart/{item_id}:
@@ -165,7 +155,5 @@ router.put("/cart", updateCart);
  *       500:
  *         description: An error occurred
  */
-
-router.delete("/cart/:item_id", removeFromCart);
-
-export default router;
+router.delete("/cart/:item_id", cart_1.removeFromCart);
+exports.default = router;

@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const config_js_1 = __importDefault(require("../db/config.js"));
-const OrderDetails = config_js_1.default.define("order-details", {
+const OrderDetails = config_js_1.default.define("order_details", {
     id: {
         type: sequelize_1.DataTypes.UUID,
         defaultValue: sequelize_1.DataTypes.UUIDV4,

@@ -21,8 +21,7 @@ const Order = config_js_1.default.define("order", {
         allowNull: false,
     },
     order_status: {
-        type: sequelize_1.DataTypes.STRING,
-        values: ["pending", "shipped", "cancelled", "delivered"],
+        type: sequelize_1.DataTypes.ENUM("pending", "shipped", "cancelled", "delivered"),
         defaultValue: "pending",
         allowNull: false,
     },

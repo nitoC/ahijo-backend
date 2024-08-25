@@ -51,6 +51,7 @@
     "pug": "^3.0.3",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "simple-icons": "^12.3.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "typescript": "^5.4.5",

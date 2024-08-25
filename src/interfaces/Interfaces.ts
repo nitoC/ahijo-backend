@@ -1,8 +1,9 @@
 export interface ICart {
   user_id: string;
   cart_id: string;
-  quantity: string;
+  quantity?: string;
   product_id: string;
+  size?: string;
 }
 
 export interface Iproduct {

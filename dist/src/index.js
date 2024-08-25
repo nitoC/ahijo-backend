@@ -9,12 +9,14 @@ const cors_1 = __importDefault(require("cors"));
 const login_js_1 = __importDefault(require("./routes/login.js"));
 const register_js_1 = __importDefault(require("./routes/register.js"));
 const products_js_1 = __importDefault(require("./routes/products.js"));
+const cart_js_1 = __importDefault(require("./routes/cart.js"));
 const path_1 = __importDefault(require("path"));
 const index_js_1 = __importDefault(require("./models/index.js"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 //@ts-ignore
 const swaggerOptions_json_1 = __importDefault(require("../../swaggerOptions.json"));
+const customErrors_js_1 = require("./errors/customErrors.js");
 // Initialize the express app
 const app = (0, express_1.default)();
 // Load environment variables from .env file
@@ -39,11 +41,20 @@ app.get("/admin", (req, res) => {
 app.use("/api", login_js_1.default);
 app.use("/api", register_js_1.default);
 app.use("/api", products_js_1.default);
+app.use("/api", cart_js_1.default);
 const specs = (0, swagger_jsdoc_1.default)(swaggerOptions_json_1.default);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
+app.use((err, req, res, next) => {
+    if (err instanceof customErrors_js_1.BaseErrorInstance) {
+        res.status(err.status).json({ message: err.message });
+    }
+    else {
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 // Sync the database and start the server
 //@ts-ignore
-index_js_1.default.sequelize.default.sync({ alter: true }).then(() => {
+index_js_1.default.sequelize.default.sync().then(() => {
     app.listen(port, () => {
         console.log(`App is running on port ${port}`);
     });

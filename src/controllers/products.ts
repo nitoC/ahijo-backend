@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { z } from "zod";
 // import { File } from "multer";
 import {
   addProduct,
@@ -6,9 +7,12 @@ import {
   getProduct,
   deleteProduct,
   getAllProductBySex,
+  getAllProductByTag,
+  getAllProductByName,
 } from "../repositories/Product.js";
 // import product from "../models/Product.js";
 import { uploadFile } from "../config/cloudinary.js";
+import { BadRequestError } from "../errors/customErrors.js";
 
 // // Define the type for the uploaded files
 // interface MulterFile {
@@ -28,71 +32,114 @@ import { uploadFile } from "../config/cloudinary.js";
 //   files: { [fieldname: string]: File[] } | File[] | undefined;
 // }
 
-export const addProductItem = async (req: Request, res: Response) => {
+export const addProductItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { name, description, price, category, stock } = req.body;
+    const productValidate = z.object({
+      name: z.string().min(2),
+      description: z.string().min(2),
+      price: z.number().positive(),
+      category: z.string().min(2),
+      sex: z.string().nullable(),
+      stock: z.number().positive(),
+      sizes: z.string(),
+      tags: z.string().nullable().optional(),
+    });
+
+    const { name, description, price, category, stock, sex, sizes, tags } =
+      req.body;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    let filesArray = [];
+    const productValid = productValidate.safeParse({
+      name,
+      description,
+      price: parseInt(price),
+      category,
+      sex,
+      stock: parseInt(stock),
+      sizes,
+      tags,
+    });
 
-    for (let file in files) {
-      filesArray.push([files[file], file]);
+    if (!productValid.success) {
+      throw new BadRequestError(
+        "Invalid request. you submitted an empty or invalid field"
+      );
     }
+
+    const filesArray = Object.entries(files).map(([fieldname, file]) => ({
+      file: file[0],
+      fieldname,
+    }));
 
     let data: any = {
       name,
       description,
-      price,
+      price: parseInt(price),
       category,
-      stock,
+      stock: parseInt(stock),
+      sex,
+      tags: tags.split(","),
+      sizes: sizes.split(","),
       image: "",
       top_image: "",
       right_image: "",
       left_image: "",
     };
 
-    // console.log(filesArray, "files");
-    // console.log(typeof files, "files");
-    const productItem = filesArray?.map(async (file) => {
-      console.log("uploading");
-      const secure_url = await uploadFile(
-        file[0][0],
-        //@ts-ignore
-        name,
-        file[1] as string
-      );
-      console.log(secure_url, "secure url");
-      const index = file[1] as string;
-      console.log(index, "index");
-      console.log(file, "index");
-      data[index] = secure_url;
-      console.log("upload finished");
+    const productItemPromises = filesArray.map(async ({ file, fieldname }) => {
+      try {
+        const secure_url = await uploadFile(file, name, fieldname);
+        data[fieldname] = secure_url;
+      } catch (error) {
+        console.log(`Failed to upload ${fieldname}`, error);
+        throw new Error("Oops! failed to upload file to storage");
+      }
     });
-    await Promise.all(productItem);
+
+    await Promise.all(productItemPromises);
+
     const item = await addProduct(data);
-    console.log(item, "files");
-    console.log(typeof item, "files");
-    return res.json({ message: "success", status: 201, data: null });
-  } catch (error) {
-    console.log(error, "add product error");
-    res.json({ message: "oops! an error occured", status: 500 });
+    console.log(item, "Product added");
+
+    return res
+      .status(201)
+      .json({ message: "Success", status: 201, data: item });
+  } catch (err) {
+    console.log("Add product error:", err);
+    next(err);
   }
 };
 
-export const getProductItem = async (req: Request, res: Response) => {
+export const getProductItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const zodSchema = z.string();
     const { item_id } = req.params;
+    console.log(item_id, "item id");
+    console.log(req.params, "params");
+
+    const itemValid = zodSchema.safeParse(item_id);
+
+    if (!itemValid.success) throw new BadRequestError("Invalid item id");
 
     const item = await getProduct({ item_id });
     return res.json({ message: "success", status: 200, data: item });
-  } catch (error) {
-    console.log(error, "get product error");
-    res.json({ message: "Oops! an error occured", status: 500 });
+  } catch (err) {
+    console.log(err, "get product error");
+    next(err);
   }
 };
 export const getAllProductItemByCategory = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const factor = 18;
   try {
@@ -112,6 +159,51 @@ export const getAllProductItemByCategory = async (
     console.log(error, "get product error");
   }
 };
+export const getAllProductItemByName = async (req: Request, res: Response) => {
+  const factor = 18;
+  try {
+    const { name, offset, limit } = req.query;
+    console.log(req.query, "query log");
+
+    console.log(name, "get product by name");
+    let offsetVal: number = parseInt(offset as string);
+    let limitVal: number = parseInt(limit as string);
+    let nameVal: string = <string>name;
+
+    console.log(name, "name");
+
+    const item = await getAllProductByName({
+      name: nameVal,
+      offsetVal,
+      limitVal,
+    });
+    return res.json({ message: "success", status: 200, data: item });
+  } catch (error) {
+    console.log(error, "get product error");
+  }
+};
+export const getAllProductItemByTag = async (req: Request, res: Response) => {
+  const factor = 18;
+  try {
+    const { tag, offset, limit } = req.query;
+
+    let offsetVal: number = parseInt(offset as string);
+    let limitVal: number = parseInt(limit as string);
+    let tagVal: string = <string>tag;
+
+    const item = await getAllProductByTag({
+      tag: tagVal,
+      offsetVal,
+      limitVal,
+    });
+    return res
+      .status(200)
+      .json({ message: "success", status: 200, data: item });
+  } catch (error) {
+    console.log(error, "get product error");
+    res.status(500).json({ message: "couldn't fetch products" });
+  }
+};
 
 export const getAllProductItemBySex = async (req: Request, res: Response) => {
   const factor = 18;
@@ -126,6 +218,7 @@ export const getAllProductItemBySex = async (req: Request, res: Response) => {
     return res.json({ message: "success", status: 200, data: item });
   } catch (error) {
     console.log(error, "get product error");
+    res.json({ message: "oops! an error occured", status: 500 });
   }
 };
 export const deleteProductItem = async (req: Request, res: Response) => {

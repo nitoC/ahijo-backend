@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/config.js";
 
-const OrderDetails = sequelize.define("order-details", {
+const OrderDetails = sequelize.define("order_details", {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,

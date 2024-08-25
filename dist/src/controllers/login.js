@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require("bcryptjs");
 const zod_1 = require("zod");
 const jwt_1 = require("../helpers/jwt");
+const User_1 = require("../repositories/User");
+const customErrors_1 = require("../errors/customErrors");
 const user = require("../models/User.js");
 const jwt = require("jsonwebtoken");
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let customer;
         const reqObject = zod_1.z.object({
@@ -22,19 +24,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             password: zod_1.z.string().min(8),
         });
         const { email, password } = req.body;
-        console.log(email, password);
         const reqValid = reqObject.safeParse({ email, password });
         if (reqValid.success) {
-            customer = yield user.findOne({
-                where: { email },
-            });
-            console.log(customer, "custoomer");
+            customer = yield (0, User_1.findUser)(email);
+            console.log(customer && customer.dataValues && customer.dataValues, "custoomer");
+            console.log(customer && customer.id && customer.id, "custoomer id");
             if (!customer) {
-                res.json({
-                    message: "no such user",
-                    status: 404,
-                });
-                return;
+                throw new customErrors_1.NotFoundError("User not found");
             }
             let checkPassword = yield bcrypt.compare(password, customer.password);
             console.log(checkPassword, "checkpass");
@@ -47,26 +43,26 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     message: "login success",
                     success: true,
                     status: 200,
-                    data: { id: customer.id, token, refreshToken },
+                    data: {
+                        id: customer.id,
+                        token,
+                        refreshToken,
+                        cart: customer.cart,
+                    },
                 });
                 return;
             }
-            res.json({
-                message: "wrong password",
-                success: false,
-                status: 401,
-            });
+            throw new customErrors_1.UnauthorizedError("wrong password");
             // console.log(customer);
         }
         else {
-            res.json({ message: "invalid entry", status: 400, success: false });
-            return;
+            throw new customErrors_1.BadRequestError("invalid entry");
         }
     }
     catch (err) {
-        if (err && err instanceof Error) {
+        if (err && err instanceof customErrors_1.BaseErrorInstance) {
             console.log(err && (err === null || err === void 0 ? void 0 : err.message) ? err.message : "error");
-            res.status(500).json({ message: "oops! server error", status: 500 });
+            next(err);
         }
     }
 });

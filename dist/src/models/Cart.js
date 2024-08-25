@@ -10,6 +10,7 @@ const Cart = config_js_1.default.define("cart", {
         type: sequelize_1.DataTypes.UUID,
         primaryKey: true,
         allowNull: false,
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
     },
     user_id: {
         type: sequelize_1.DataTypes.UUID,

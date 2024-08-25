@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/config.js";
 
-const CartItem = sequelize.define("cart-item", {
+const CartItem = sequelize.define("cart_item", {
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
@@ -21,6 +21,10 @@ const CartItem = sequelize.define("cart-item", {
   },
   quantity: {
     type: DataTypes.INTEGER,
+  },
+  size: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

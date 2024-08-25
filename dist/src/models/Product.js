@@ -14,38 +14,54 @@ const Product = config_js_1.default.define("product", {
     },
     name: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     description: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     price: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     },
     image: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     top_image: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     right_image: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     left_image: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     category: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     stock: {
         type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     },
     sex: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.ENUM("male", "female", "unisex"),
+        defaultValue: "unisex",
+        allowNull: false,
     },
     sizes: {
         type: sequelize_1.DataTypes.JSON,
+        allowNull: true,
+    },
+    tags: {
+        type: sequelize_1.DataTypes.ARRAY(sequelize_1.DataTypes.ENUM("top deal", "new arrival", "best seller", "limited edition")),
+        allowNull: true,
     },
 }, {
-    timestamps: false,
+    timestamps: true, // Consider setting to true if you need createdAt and updatedAt fields
 });
 module.exports = Product;
